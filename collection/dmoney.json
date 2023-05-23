@@ -1,0 +1,566 @@
+{
+	"info": {
+		"_postman_id": "ee0c0eef-067e-4341-b7b6-a124f3fbbd5d",
+		"name": "dmoney-b7",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User Login successfully",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"pm.collectionVariables.set(\"token\",jsonData.token);",
+							"pm.environment.set(\"token\",jsonData.token);",
+							"",
+							"var base_url = \"http://dmoney.roadtocareer.net\";",
+							"pm.collectionVariables.set(\"base_url\",base_url);",
+							"",
+							"",
+							"pm.test(\"login successful\",()=>{ ",
+							"    var jsonData = pm.response.json();",
+							"    var message = jsonData.message;",
+							"    console.log(message)",
+							"    pm.expect(message).contains(\"Login successfully\")",
+							"})",
+							"",
+							"pm.test(\"if user role is showing correctly\",function(){",
+							"    var jsonData = pm.response.json();",
+							"    var role = jsonData.role;",
+							"    pm.expect(role).not.equal(null)",
+							"})",
+							"    "
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"agent@roadtocareer.net\",\n    \"password\":\"1234\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://dmoney.roadtocareer.net/user/login",
+					"protocol": "http",
+					"host": [
+						"dmoney",
+						"roadtocareer",
+						"net"
+					],
+					"path": [
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User can't login with wrong password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"user can't login with wrong password\",function(){",
+							"     var jsonData = pm.response.json();",
+							"     var actual_message = jsonData.message;",
+							"",
+							"     pm.expect(actual_message).contains(\"Password incorrect\");",
+							"",
+							"})",
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"agent@roadtocareer.net\",\n    \"password\":\"12344\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://dmoney.roadtocareer.net/user/login",
+					"protocol": "http",
+					"host": [
+						"dmoney",
+						"roadtocareer",
+						"net"
+					],
+					"path": [
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User List",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"User list data is showing\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    var id = jsonData.users[0].id;",
+							"    var phoneNumber= jsonData.users[0].phone_number;",
+							"    pm.expect(id).equal(1233);",
+							" ",
+							"    pm.expect(phoneNumber).contain(\"909\")",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://dmoney.roadtocareer.net/user/list",
+					"protocol": "http",
+					"host": [
+						"dmoney",
+						"roadtocareer",
+						"net"
+					],
+					"path": [
+						"user",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"User should found by user id\", function(){",
+							"    var jsonData= pm.response.json();",
+							"    pm.expect(jsonData.message).to.contains(\"User found\") ",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://dmoney.roadtocareer.net/user/search/id/8963",
+					"protocol": "http",
+					"host": [
+						"dmoney",
+						"roadtocareer",
+						"net"
+					],
+					"path": [
+						"user",
+						"search",
+						"id",
+						"8963"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create New User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"    pm.test(\"User created successfully\",function(){",
+							"    var jsonData = pm.response.json();",
+							"    pm.collectionVariables.set(\"user_id\",jsonData.user.id);",
+							"    pm.environment.set(\"user_id\",jsonData.user.id);",
+							"    pm.expect( jsonData.message).to.contains(\"User created\")",
+							"",
+							"})",
+							"",
+							"pm.test(\"status code is 201\",function(){",
+							"    pm.response.to.have.status(201);",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var prefix = \"0171\";",
+							"",
+							"var randomNumber= _.random(1000000,9999999);",
+							"var phoneNumber = prefix+randomNumber; ",
+							"pm.collectionVariables.set(\"user_phone_number\",phoneNumber)",
+							"pm.environment.set(\"user_phone_number\",phoneNumber)",
+							"console.log(phoneNumber);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "default"
+					},
+					{
+						"key": "X-AUTH-SECRET-KEY",
+						"value": "ROADTOSDET ",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "       {\n        \"name\": \"{{$randomFullName}}\",\n        \"email\": \"{{$randomEmail}}\",\n        \"password\": \"1234\", \n        \"phone_number\": \"{{user_phone_number}}\",\n        \"nid\": \"1234523095\",\n        \"role\": \"Agent\"\n       }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://dmoney.roadtocareer.net/user/create",
+					"protocol": "http",
+					"host": [
+						"dmoney",
+						"roadtocareer",
+						"net"
+					],
+					"path": [
+						"user",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "default"
+					},
+					{
+						"key": "X-AUTH-SECRET-KEY",
+						"value": "ROADTOSDET ",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "       {\n        \"name\": \"{{$randomFullName}}\",\n        \"email\": \"system@roadtocareer.net\",\n        \"password\": \"1234\", \n        \"phone_number\": \"12345678989\", \n        \"nid\": \"8976585095\",\n        \"role\": \"Agent\"\n       }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/user/update/8963",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"user",
+						"update",
+						"8963"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update specific data only",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "default"
+					},
+					{
+						"key": "X-AUTH-SECRET-KEY",
+						"value": "ROADTOSDET ",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "       {\n        \"name\": \"{{$randomFullName}}\",\n        \"email\": \"patch@roadtocareer.net\",\n        \"password\": \"1234\"\n        \n       }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/user/update/8963",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"user",
+						"update",
+						"8963"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User already exist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"user can not create if email and phone number not change\",function(){",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.contain(\"already exists\");",
+							"})",
+							"",
+							"pm.test(\"status code is 208\",function(){",
+							"    pm.response.to.have.status(208);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "default"
+					},
+					{
+						"key": "X-AUTH-SECRET-KEY",
+						"value": "ROADTOSDET ",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "       {\n        \"id\": 12059,\n        \"name\": \"Tamara Runte\",\n        \"email\": \"Kian76@yahoo.com\",\n        \"password\": \"1234\",\n        \"phone_number\": \"01718468312\",\n        \"nid\": \"1234523095\",\n        \"role\": \"Agent\"\n       }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://dmoney.roadtocareer.net/user/create",
+					"protocol": "http",
+					"host": [
+						"dmoney",
+						"roadtocareer",
+						"net"
+					],
+					"path": [
+						"user",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"User deleted successfully\",function(){",
+							"    var jsonData = pm.response.json();",
+							"    console.log(jsonData)",
+							"    pm.expect(jsonData.message).to.contains(\"deleted successfully\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "default"
+					},
+					{
+						"key": "X-AUTH-SECRET-KEY",
+						"value": "ROADTOSDET",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/user/delete/{{user_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"user",
+						"delete",
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "user_phone_number",
+			"value": ""
+		},
+		{
+			"key": "user_id",
+			"value": ""
+		},
+		{
+			"key": "base_url",
+			"value": ""
+		}
+	]
+}
